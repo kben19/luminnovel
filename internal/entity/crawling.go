@@ -1,23 +1,23 @@
 package entity
 
 type CrawlingItem struct {
-	Title string
-	Price CrawlingPrice
-	Stock CrawlingStock
-	Weight float64
+	Title        string
+	Price        CrawlingPrice
+	Stock        CrawlingStock
+	Weight       float64
 	ActualWeight float64
 }
 
 type CrawlingPrice struct {
-	Amazon string
+	Amazon         string
 	RightStufAnime string
-	InStockTrades string
+	InStockTrades  string
 	BookDepository string
 }
 
 type CrawlingStock struct {
-	Amazon bool
+	Amazon         bool
 	RightStufAnime bool
-	InStockTrades bool
+	InStockTrades  bool
 	BookDepository bool
 }
