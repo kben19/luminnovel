@@ -8,7 +8,7 @@ import (
 
 type usecaseProductProvider interface {
 	CrawlingAllProductSeries(ctx context.Context) error
-	CrawlingProductSeries(ctx context.Context, title entity.ProductTitle) error
+	CrawlingProductSeries(ctx context.Context, title entity.ProductTitle, source entity.SiteSource) error
 }
 
 type Handler struct {

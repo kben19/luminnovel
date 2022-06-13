@@ -1,15 +1,14 @@
-package rightstufanime
+package bookdepository
 
 import (
 	"context"
-
 	"luminnovel/internal/entity"
 )
 
 func (rsc *resource) FindSeriesByTitleFromDB(ctx context.Context, collectionName string, title string) ([]entity.Source, error) {
 	cursor, err := rsc.dbRepo.Find(ctx, collectionName, map[string]interface{}{
 		"title": title,
-		"site":  string(entity.RightStufAnime),
+		"site":  string(entity.BookDepository),
 	})
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"luminnovel/internal/service/bookdepository"
 	"net/http"
 	"time"
 
@@ -30,13 +31,15 @@ func InitHTTP(ctx context.Context) {
 	httpRepo := httpRepo.New(httpClient)
 	googleSheetRepo := googlesheet.New(sheetService)
 
+	bookDepoRsc := bookdepository.NewResource(httpRepo, mongoRepo)
 	rightStufRsc := rightstufanime.NewResource(httpRepo, mongoRepo)
 	crawlingRsc := crawling.NewResource(googleSheetRepo)
 
+	bookDepoSvc := bookdepository.NewService(bookDepoRsc)
 	rightStufSvc := rightstufanime.NewService(rightStufRsc)
 	crawlingSvc := crawling.NewService(crawlingRsc)
 
-	usecaseProduct := product.New(crawlingSvc, rightStufSvc)
+	usecaseProduct := product.New(crawlingSvc, rightStufSvc, bookDepoSvc)
 	handlerProduct := productHandler.New(usecaseProduct)
 
 	handler.ServeHTTP(handlerProduct)

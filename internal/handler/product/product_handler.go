@@ -17,7 +17,13 @@ func (handler *Handler) HandleGetCrawlingProduct(w http.ResponseWriter, r *http.
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	err := handler.usecaseProduct.CrawlingProductSeries(ctx, entity.ProductTitle(paramTitle))
+
+	paramSource := entity.SiteSource(r.FormValue("source"))
+	if !paramSource.Validate() {
+		paramSource = ""
+	}
+
+	err := handler.usecaseProduct.CrawlingProductSeries(ctx, entity.ProductTitle(paramTitle), paramSource)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
