@@ -1,5 +1,5 @@
 ### GET Product Crawling
-GET http://localhost:8000/crawling/product?title=Smartphone&source=
+GET http://localhost:8000/crawling/product?title=Dating Sim&source=
 
 ### GET All Product Crawling
 GET http://localhost:8000/crawling/product/all

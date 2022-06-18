@@ -16,8 +16,8 @@ func (svc *service) UpdateCrawlingSheet(payload []CrawlingPayload, selection Cra
 	if sheetName == "" {
 		return errors.New("invalid title name")
 	}
-	rangeGet := sheetName + "!A1:G"
-	rangeSet := sheetName + "!A2:G"
+	rangeGet := sheetName + "!A1:H"
+	rangeSet := sheetName + "!A2:H"
 
 	sheetValues, mapHeader, err := svc.resource.GetSheetValues(spreadsheetIDCrawling, rangeGet)
 	if err != nil {
@@ -69,6 +69,11 @@ func updateSheetWithPayload(sheetValues []entity.CrawlingItem, payload []Crawlin
 			sheetValues[volumeIndex].Price.Amazon = item.Price
 			sheetValues[volumeIndex].Stock.Amazon = !item.InStock
 			sheetValues[volumeIndex].Weight = item.Weight
+		} else if selection.Source.BookDepository {
+			priceChanged = item.Price != sheetValues[volumeIndex].Price.BookDepository
+			stockChanged = !item.InStock != sheetValues[volumeIndex].Stock.BookDepository
+			sheetValues[volumeIndex].Price.BookDepository = item.Price
+			sheetValues[volumeIndex].Stock.BookDepository = !item.InStock // row is out of stock format
 		}
 
 		// count updated rows

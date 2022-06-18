@@ -7,15 +7,16 @@ import (
 )
 
 const (
-	titleHeader      = "Title"
-	amazonHeader     = "Amazon"
-	rightStufHeader  = "RightStufAnime"
-	inStockHeader    = "InStockTrades"
-	bookDepoHeader   = "BookDepository"
-	outOfStockHeader = "Out of stock"
-	weightHeader     = "Weight"
+	titleHeader                    = "Title"
+	amazonHeader                   = "Amazon"
+	rightStufHeader                = "RightStufAnime"
+	inStockHeader                  = "InStockTrades"
+	bookDepoHeader                 = "BookDepository"
+	outOfStockRightStufHeader      = "Out of stock"
+	outOfStockBookDepositoryHeader = "OOS BD"
+	weightHeader                   = "Weight"
 
-	totalColumn = 7
+	totalColumn = 8
 )
 
 func (rsc *resource) GetSheetValues(spreadsheetID string, range_ string) ([]entity.CrawlingItem, map[string]int, error) {
@@ -38,8 +39,10 @@ func (rsc *resource) GetSheetValues(spreadsheetID string, range_ string) ([]enti
 			mapHeaderColumn[inStockHeader] = index
 		case bookDepoHeader:
 			mapHeaderColumn[bookDepoHeader] = index
-		case outOfStockHeader:
-			mapHeaderColumn[outOfStockHeader] = index
+		case outOfStockRightStufHeader:
+			mapHeaderColumn[outOfStockRightStufHeader] = index
+		case outOfStockBookDepositoryHeader:
+			mapHeaderColumn[outOfStockBookDepositoryHeader] = index
 		case weightHeader:
 			mapHeaderColumn[weightHeader] = index
 		}
@@ -52,7 +55,11 @@ func (rsc *resource) GetSheetValues(spreadsheetID string, range_ string) ([]enti
 
 	crawlings := make([]entity.CrawlingItem, len(values))
 	for index, row := range values {
-		rightStufStock, err := strconv.ParseBool(row[mapHeaderColumn[outOfStockHeader]].(string))
+		rightStufStock, err := strconv.ParseBool(row[mapHeaderColumn[outOfStockRightStufHeader]].(string))
+		if err != nil {
+			return nil, nil, err
+		}
+		bookDepoStock, err := strconv.ParseBool(row[mapHeaderColumn[outOfStockBookDepositoryHeader]].(string))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -72,7 +79,7 @@ func (rsc *resource) GetSheetValues(spreadsheetID string, range_ string) ([]enti
 				Amazon:         false,
 				RightStufAnime: rightStufStock,
 				InStockTrades:  false,
-				BookDepository: false,
+				BookDepository: bookDepoStock,
 			},
 			Weight:       weight,
 			ActualWeight: 0,
@@ -100,7 +107,8 @@ func convertCrawlingItemPayload(payload []entity.CrawlingItem, range_ string, ma
 		rowValue[mapHeader[rightStufHeader]] = row.Price.RightStufAnime
 		rowValue[mapHeader[inStockHeader]] = row.Price.InStockTrades
 		rowValue[mapHeader[bookDepoHeader]] = row.Price.BookDepository
-		rowValue[mapHeader[outOfStockHeader]] = row.Stock.RightStufAnime
+		rowValue[mapHeader[outOfStockRightStufHeader]] = row.Stock.RightStufAnime
+		rowValue[mapHeader[outOfStockBookDepositoryHeader]] = row.Stock.BookDepository
 		rowValue[mapHeader[weightHeader]] = row.Weight
 		values[index] = rowValue
 	}

@@ -1,6 +1,8 @@
 package bookdepository
 
-import "context"
+import (
+	"context"
+)
 
 const (
 	collectionSource = "source"
