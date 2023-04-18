@@ -35,7 +35,7 @@ func (svc *service) UpdateCrawlingSheet(payload []CrawlingPayload, selection Cra
 		fmt.Printf("Price updated in volumes %s\n", arrayToString(priceChanges))
 		fmt.Printf("Stock updated in volumes %s\n", arrayToString(stockChanges))
 	} else {
-		fmt.Println("No Updates")
+		fmt.Printf("No Updates on source %s\n", selection.getSourcename())
 	}
 	return nil
 }

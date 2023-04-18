@@ -15,7 +15,7 @@ func (handler *Handler) HandleGetCrawlingProduct(w http.ResponseWriter, r *http.
 		_, _ = w.Write([]byte("Invalid title"))
 		return
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	paramSource := entity.SiteSource(r.FormValue("source"))

@@ -4,6 +4,7 @@ type ProductTitle string
 
 // Title representing keys in database and sheet name
 const (
+	BerserkGluttony      ProductTitle = "Berserk Gluttony"
 	Bofuri               ProductTitle = "Bofuri"
 	ClassroomElite       ProductTitle = "Classroom Elite"
 	DeathMarch           ProductTitle = "Death March"
@@ -22,6 +23,7 @@ const (
 )
 
 var ListAllTitles = []ProductTitle{
+	BerserkGluttony,
 	Bofuri,
 	ClassroomElite,
 	DeathMarch,
