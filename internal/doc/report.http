@@ -1,2 +1,2 @@
 ### GET Calculate Report
-GET http://localhost:8000/reporting/calculate?path=files\input\Tokopedia_Order_20230301-20230331.xlsx
+GET http://localhost:8000/reporting/calculate?path=files\input\Tokopedia_Order_20230401-20230419.xlsx&path_commission=files\input\Commission.xlsx

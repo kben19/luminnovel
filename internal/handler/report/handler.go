@@ -6,7 +6,7 @@ import (
 )
 
 type usecaseReportProvider interface {
-	CalculateMonthlySummaryReporting(ctx context.Context, path string) (report.SummaryReport, error)
+	CalculateMonthlySummaryReporting(ctx context.Context, path string, pathCommission string) (report.SummaryReport, error)
 }
 
 type Handler struct {

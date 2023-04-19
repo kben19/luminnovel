@@ -18,8 +18,9 @@ func (handler *Handler) HandleCalculateReport(w http.ResponseWriter, r *http.Req
 		_, _ = w.Write([]byte("Invalid path"))
 		return
 	}
+	pathCommissionParam := r.FormValue("path_commission")
 
-	summary, err := handler.usecaseReport.CalculateMonthlySummaryReporting(ctx, pathParam)
+	summary, err := handler.usecaseReport.CalculateMonthlySummaryReporting(ctx, pathParam, pathCommissionParam)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
