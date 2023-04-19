@@ -2,7 +2,13 @@ module luminnovel
 
 go 1.17
 
-require go.mongodb.org/mongo-driver v1.9.1
+require (
+	github.com/tealeg/xlsx v1.0.5
+	go.mongodb.org/mongo-driver v1.9.1
+	golang.org/x/oauth2 v0.0.0-20220524215830-622c5d57e401
+	golang.org/x/text v0.3.7
+	google.golang.org/api v0.82.0
+)
 
 require (
 	cloud.google.com/go/compute v1.6.1 // indirect
@@ -20,11 +26,8 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f // indirect
 	golang.org/x/net v0.0.0-20220531201128-c960675eff93 // indirect
-	golang.org/x/oauth2 v0.0.0-20220524215830-622c5d57e401 // indirect
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/api v0.82.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220602131408-e326c6e8e9c8 // indirect
 	google.golang.org/grpc v1.47.0 // indirect

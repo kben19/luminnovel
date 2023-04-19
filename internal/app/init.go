@@ -3,11 +3,13 @@ package app
 import (
 	"context"
 	"luminnovel/internal/service/bookdepository"
+	"luminnovel/internal/usecase/report"
 	"net/http"
 	"time"
 
 	"luminnovel/internal/handler"
 	productHandler "luminnovel/internal/handler/product"
+	reportHandler "luminnovel/internal/handler/report"
 	"luminnovel/internal/repository/googlesheet"
 	httpRepo "luminnovel/internal/repository/http"
 	"luminnovel/internal/repository/mongodb"
@@ -40,7 +42,9 @@ func InitHTTP(ctx context.Context) {
 	crawlingSvc := crawling.NewService(crawlingRsc)
 
 	usecaseProduct := product.New(crawlingSvc, rightStufSvc, bookDepoSvc)
+	usecaseReport := report.New()
 	handlerProduct := productHandler.New(usecaseProduct)
+	handlerReport := reportHandler.New(usecaseReport)
 
-	handler.ServeHTTP(handlerProduct)
+	handler.ServeHTTP(handlerProduct, handlerReport)
 }

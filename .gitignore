@@ -2,3 +2,4 @@
 main.exe
 token.json
 files/*.json
+files/input/*
