@@ -5,15 +5,18 @@ import (
 	"errors"
 	"log"
 	"strconv"
+	"strings"
 )
 
 const (
-	InvoiceIndex      = 1
-	NamaProdukIndex   = 8
-	StatusIndex       = 3
-	JumlahProdukIndex = 13
-	HargaAwalIndex    = 14
-	HargaJualIndex    = 16
+	InvoiceIndex       = 1
+	NamaProdukIndex    = 8
+	StatusIndex        = 3
+	JumlahProdukIndex  = 13
+	HargaAwalIndex     = 14
+	HargaJualIndex     = 16
+	BundlingPriceIndex = 15
+	BundlingNameIndex  = 39
 )
 
 const (
@@ -78,15 +81,19 @@ func (usecase *Usecase) CalculateMonthlySummaryReporting(ctx context.Context, pa
 	}
 
 	firstSheet := fileRaw[0]
+
+	// firstSheet[4] represents the fourth row which is the header title
+	// Validate and remove any bundling header(s)
+	isBundling := validateBundlingHeader(firstSheet[4])
 	// Header starts from row 4 based on generated reports
-	err = validateHeader(firstSheet[4], headerUsed)
+	err = validateHeader(firstSheet[4], headerUsed, isBundling)
 	if err != nil {
 		log.Println(err)
 		return SummaryReport{}, err
 	}
 
 	// extract values
-	trxList, err := extractValues(firstSheet[5:])
+	trxList, err := extractValues(firstSheet[5:], isBundling)
 	if err != nil {
 		log.Println(err)
 		return SummaryReport{}, err
@@ -105,7 +112,7 @@ func (usecase *Usecase) CalculateMonthlySummaryReporting(ctx context.Context, pa
 	}
 
 	// Header starts from row 0 based on generated reports
-	err = validateHeader(commissionFile[0][0], headerCommission)
+	err = validateHeader(commissionFile[0][0], headerCommission, false)
 	if err != nil {
 		log.Println(err)
 		return SummaryReport{}, err
@@ -137,9 +144,9 @@ func calculateCommissions(mapInvoices map[string]InvoiceDetail, commissionList [
 			continue
 		}
 		switch commission.CommissionName {
-		case "Biaya Layanan Power Merchant Pro":
+		case "Biaya Layanan Power Merchant Pro", "Biaya Layanan Power Merchant":
 			serviceFee += commission.ServiceFeeGross
-		case "Biaya Layanan Bebas Ongkir Power Merchant Pro":
+		case "Biaya Layanan Bebas Ongkir Power Merchant Pro", "Biaya Layanan Bebas Ongkir Power Merchant":
 			deliveryFee += commission.ServiceFeeGross
 		}
 		// Check for possibility an invoice is not listed in commission list
@@ -173,7 +180,7 @@ func calculateTransactions(trxList []TransactionReport) (SummaryReport, map[stri
 		totalJumlah += trx.Jumlah
 
 		// canceled order
-		if trx.Status == "Dibatalkan Penjual" {
+		if strings.Contains(trx.Status, "Dibatalkan Penjual") || strings.Contains(trx.Status, "Dibatalkan Pembeli") || strings.Contains(trx.Status, "Dibatalkan Sistem") {
 			continue
 		}
 		totalHargaAwal += trx.HargaAwal
@@ -222,12 +229,16 @@ func extractCommissionValues(values [][]string) ([]CommissionReport, error) {
 	return commList, nil
 }
 
-func extractValues(values [][]string) ([]TransactionReport, error) {
+func extractValues(values [][]string, isBundling bool) ([]TransactionReport, error) {
 	trxList := make([]TransactionReport, len(values))
 	for index, row := range values {
 		mapValues := map[int]string{}
 		for indexMap := range headerUsed {
-			mapValues[indexMap] = row[indexMap]
+			var indexAddition int
+			if isBundling && indexMap == HargaJualIndex {
+				indexAddition++
+			}
+			mapValues[indexMap] = row[indexMap+indexAddition]
 		}
 		jumlah, err := strconv.Atoi(mapValues[JumlahProdukIndex])
 		if err != nil {
@@ -256,15 +267,34 @@ func extractValues(values [][]string) ([]TransactionReport, error) {
 	return trxList, nil
 }
 
-func validateHeader(headers []string, headerMap map[int]string) error {
+func validateHeader(headers []string, headerMap map[int]string, isBundling bool) error {
 	for index, header := range headerMap {
 		if index >= len(headers) {
 			return errors.New("invalid index header")
 		}
-		if actualHeader := headers[index]; actualHeader != header {
-			log.Printf("index: %d, header: %s \n", index, actualHeader)
+		var indexAddition int
+		if isBundling && isBundlingIndex(index) {
+			indexAddition++
+			continue
+		}
+		if actualHeader := headers[index+indexAddition]; actualHeader != header {
+			log.Printf("index: %d, header: %s , expected: %s\n", index, actualHeader, header)
 			return errors.New("header is not valid")
 		}
 	}
 	return nil
+}
+
+func validateBundlingHeader(headers []string) bool {
+	for _, header := range headers {
+		if strings.Contains(header, "Bundling") {
+			return true
+		}
+	}
+	return false
+}
+
+// Determine for those columns after bundling column need to be increment
+func isBundlingIndex(index int) bool {
+	return index == HargaJualIndex
 }

@@ -12,9 +12,9 @@ func main() {
 
 	app.InitHTTP(ctx)
 
+	log.Println("Listening on Port 8000")
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Listening on Port 8000")
 }
